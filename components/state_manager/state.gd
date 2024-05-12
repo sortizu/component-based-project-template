@@ -1,14 +1,15 @@
 tool
 class_name State extends Node2D
-
 var actor: Entity
-
+# warning-ignore:unused_signal
+signal change_state(new_state)
+# TODO DOCUMENTATION
 func enter_state():
 	pass
-
+# TODO DOCUMENTATION
 func exit_state():
 	pass
-
+# TODO DOCUMENTATION
 func state_unhandled_input(_event:InputEvent):
 	pass
 # TODO DOCUMENTATION

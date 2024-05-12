@@ -14,6 +14,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://components/component.gd"
 }, {
+"base": "Reference",
+"class": "ECSUtils",
+"language": "GDScript",
+"path": "res://addons/ecs/ecs_utilities.gd"
+}, {
 "base": "Node2D",
 "class": "Entity",
 "language": "GDScript",
@@ -31,6 +36,7 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "Component": "",
+"ECSUtils": "",
 "Entity": "",
 "State": "",
 "StateManager": ""
@@ -40,6 +46,10 @@ _global_script_class_icons={
 
 config/name="ecs-2d-project-template"
 config/icon="res://icon.png"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/ecs/plugin.cfg" )
 
 [gui]
 
