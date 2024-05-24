@@ -14,11 +14,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://components/component.gd"
 }, {
-"base": "Reference",
-"class": "ECSUtils",
-"language": "GDScript",
-"path": "res://addons/ecs/ecs_utilities.gd"
-}, {
 "base": "Node2D",
 "class": "Entity",
 "language": "GDScript",
@@ -33,13 +28,18 @@ _global_script_classes=[ {
 "class": "StateManager",
 "language": "GDScript",
 "path": "res://components/state_manager/state_manager.gd"
+}, {
+"base": "Component",
+"class": "TestComponent",
+"language": "GDScript",
+"path": "res://test/test_component.gd"
 } ]
 _global_script_class_icons={
 "Component": "",
-"ECSUtils": "",
 "Entity": "",
 "State": "",
-"StateManager": ""
+"StateManager": "",
+"TestComponent": ""
 }
 
 [application]
@@ -47,13 +47,18 @@ _global_script_class_icons={
 config/name="ecs-2d-project-template"
 config/icon="res://icon.png"
 
+[autoload]
+
+CBPTUtilities="*res://addons/cbpt/cbpt_utilities.gd"
+
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/ecs/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/cbpt/plugin.cfg" )
 
 [gui]
 
 common/drop_mouse_on_gui_input_disabled=true
+common/text_edit_undo_stack_max_size=10240
 
 [physics]
 

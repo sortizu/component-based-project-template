@@ -2,47 +2,32 @@
 tool
 class_name Entity extends Node2D
 
-func get_component(type,throw_error:bool=true) -> Node:
+# TODO DOCUMENTATION
+func get_component(component_class,throw_error:bool=true,print_error:bool=true) -> Node:
 	var component: Node = null
-	for child in get_children():
-		child = child as Node
-		if type is String:
-			if child.get_class() == type:
-				component=child
-				break
-		elif child is type:
-			component=child
-			break
-	if not component and throw_error:
-		if type is String:
-			printerr(name+"("+get_class()+"): Couldn't find component of type "+type)
-			assert(not throw_error,"Error trying to find "+str(type))
-		else:
-			var type_class_name = type.source_code.get_slice("class_name",1).get_slice("extends",0).replace(" ","")
-			printerr(name+"("+get_class()+"): Couldn't find component of type "+type_class_name)
-			assert(not throw_error,name+"("+get_class()+"): Error trying to find "+type_class_name)
-	return component
-
-func remove_component(type,throw_error:bool=true):
-	var component: Node = null
-	for child in get_children():
-		child = child as Node
-		if type is String:
-			if child.get_class() == type:
-				component=child
-				break
-		elif child is type:
-			component=child
-			break
-	if not component:
-		if not throw_error:
-			pass
-		if type is String:
-			printerr(name+"("+get_class()+"): Couldn't remove component of type "+type)
-			assert(not throw_error,"Error trying to remove "+str(type))
-		else:
-			var type_class_name = type.source_code.get_slice("class_name",1).get_slice("extends",0).replace(" ","")
-			printerr(name+"("+get_class()+"): Couldn't remove component of type "+type_class_name)
-			assert(not throw_error,name+"("+get_class()+"): Error trying to remove "+type_class_name)
+	# "SAFETY WALL" to filter the correct values for type parameter
+	var class_type: int = CBPTUtilities.get_class_parameter_type(component_class)
+	if class_type == CBPTUtilities.ClassParameterTypes.OTHER:
+		assert(false,"%s: Given parameter 'component_class' is not of a valid type (GDScriptNativeClass, GDScript, String)"%name)
+	# Searching the component
+	if class_type == CBPTUtilities.ClassParameterTypes.STRING:
+		for child in get_children():
+			if CBPTUtilities.get_node_class_name(child)==component_class: component = child
 	else:
-		component.queue_free()
+		for child in get_children():
+			if child is component_class: component = child
+	# Function errors
+	if not component and (throw_error or print_error):
+		var component_class_name: String
+		# Getting node class name
+		if class_type==CBPTUtilities.ClassParameterTypes.GDSCRIPT:
+			component_class_name = CBPTUtilities.get_name_of_custom_class(component_class)
+		elif class_type==CBPTUtilities.ClassParameterTypes.GDSCRIPTNATIVECLASS:
+			component_class_name = CBPTUtilities.get_name_of_native_class(component_class)
+		else:
+			component_class_name = component_class
+		var error_msg = "%s: Couldn't find component of type %s"%[name, component_class_name]
+		if print_error:
+			printerr(error_msg)
+		assert(not throw_error,error_msg)
+	return component

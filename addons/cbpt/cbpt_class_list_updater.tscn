@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/cbpt/cbpt_class_list_updater.gd" type="Script" id=1]
+
+[node name="CBPTClassListUpdater" type="HTTPRequest"]
+script = ExtResource( 1 )

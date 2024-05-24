@@ -42,5 +42,7 @@ func _on_child_entered(node:Node):
 func _get_configuration_warning() -> String:
 	for child in get_children():
 		if child is State:
-			child.actor = get_parent()
+			child.set("actor",get_parent())
+		else:
+			return "Children of this component should be of type State"
 	return ._get_configuration_warning()
