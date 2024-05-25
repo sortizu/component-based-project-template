@@ -31,3 +31,12 @@ func get_component(component_class,throw_error:bool=true,print_error:bool=true) 
 			printerr(error_msg)
 		assert(not throw_error,error_msg)
 	return component
+
+## Getting the missing components on this entity to show in editor as warning
+func _get_configuration_warning() -> String:
+	var dependencies_types = CBPTUtilities.get_missing_components_on_entity(get_script().source_code,self,"")
+	var msg: String
+	if dependencies_types:
+		var str_list:String=str(dependencies_types)
+		msg = "This entity will require the following components: " + str_list.substr(1,len(str_list)-2)
+	return msg
