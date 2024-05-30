@@ -28,23 +28,17 @@ _global_script_classes=[ {
 "class": "StateManager",
 "language": "GDScript",
 "path": "res://components/state_manager/state_manager.gd"
-}, {
-"base": "Component",
-"class": "TestComponent",
-"language": "GDScript",
-"path": "res://test/test_component.gd"
 } ]
 _global_script_class_icons={
 "Component": "",
 "Entity": "",
 "State": "",
-"StateManager": "",
-"TestComponent": ""
+"StateManager": ""
 }
 
 [application]
 
-config/name="ecs-2d-project-template"
+config/name="component-based-project-template"
 config/icon="res://icon.png"
 
 [autoload]

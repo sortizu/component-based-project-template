@@ -51,11 +51,12 @@ func get_missing_components_on_entity(source_code:String, actor:Entity, entity_s
 	if not entity_specifier.empty(): searched_code = entity_specifier + "."+ searched_code
 	var splitted_code_array: Array = source_code.split(searched_code)
 	var valid_splitted_code:bool=false
-	var is_comment:bool=false
-	var is_str:bool=false
+	var is_comment: bool = false
+	var is_str: bool = false
+	var is_declaration: bool = false
 	for splitted_code in splitted_code_array:
 		splitted_code=splitted_code as String
-		if valid_splitted_code and not is_comment and not is_str:
+		if valid_splitted_code and not is_comment and not is_str and not is_declaration:
 			var type_name: String = splitted_code.get_slice(")",0)
 			if not actor.get_component(type_name,false):
 				dependencies_types.append(type_name)
@@ -67,6 +68,7 @@ func get_missing_components_on_entity(source_code:String, actor:Entity, entity_s
 			is_comment=false
 		var quotes = splitted_code.countn("\"")
 		is_str = quotes % 2 != 0
+		is_declaration = splitted_code.ends_with("func ")
 		valid_splitted_code = true
 	return dependencies_types
 
