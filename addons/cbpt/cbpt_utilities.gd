@@ -21,7 +21,7 @@ func get_name_of_native_class(native_class:GDScriptNativeClass)->String:
 func get_name_of_custom_class(custom_node_class:GDScript)->String:
 	var str_class_name: String = ""
 	var source_code: String = custom_node_class.source_code
-	str_class_name = source_code.get_slice("class_name",1).get_slice("extends",0).strip_edges()
+	str_class_name = source_code.replace("\n"," ").replace(";"," ").get_slice("class_name",1).get_slice(" ",1).strip_edges()
 	return str_class_name
 
 # TODO DOCUMENTATION
