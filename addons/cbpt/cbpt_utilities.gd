@@ -42,23 +42,52 @@ func get_class_parameter_type(node_class)->int:
 		return ClassParameterTypes.GDSCRIPTNATIVECLASS
 	return ClassParameterTypes.OTHER
 
+func get_component_on_entity(entity: Entity, component_class, print_error: bool = true, throw_error: bool = false) -> Node:
+	var component: Node = null
+	# "SAFETY WALL" to filter the correct values for type parameter
+	var class_type: int = get_class_parameter_type(component_class)
+	if class_type == ClassParameterTypes.OTHER:
+		assert(false,"%s: Given parameter 'component_class' is not of a valid type (GDScriptNativeClass, GDScript, String)"% entity.name)
+	# Searching the component
+	if class_type == ClassParameterTypes.STRING:
+		for child in entity.get_children():
+			if get_node_class_name(child)==component_class: component = child
+	else:
+		for child in entity.get_children():
+			if child is component_class: component = child
+	# Function errors
+	if not component and (throw_error or print_error):
+		var component_class_name: String
+		# Getting node class name
+		if class_type == ClassParameterTypes.GDSCRIPT:
+			component_class_name = get_name_of_custom_class(component_class)
+		elif class_type == ClassParameterTypes.GDSCRIPTNATIVECLASS:
+			component_class_name = get_name_of_native_class(component_class)
+		else:
+			component_class_name = component_class
+		var error_msg = "%s: Couldn't find component of type %s"%[entity.name, component_class_name]
+		if print_error:
+			printerr(error_msg)
+		assert(not throw_error,error_msg)
+	return component
+
 ## Searches within a source code for all components requested within
 ## calls to "get_component" and, from this list, returns only the components
 ## that are missing in the "actor" entity
 func get_missing_components_on_entity(source_code:String, actor:Entity, entity_specifier:String)->Array:
 	var dependencies_types = []
 	var searched_code: String = "get_component("
-	if not entity_specifier.empty(): searched_code = entity_specifier + "."+ searched_code
+	if not entity_specifier.empty(): searched_code = entity_specifier + "." + searched_code
 	var splitted_code_array: Array = source_code.split(searched_code)
-	var valid_splitted_code:bool=false
+	var valid_splitted_code: bool = false
 	var is_comment: bool = false
 	var is_str: bool = false
 	var is_declaration: bool = false
 	for splitted_code in splitted_code_array:
-		splitted_code=splitted_code as String
+		splitted_code = splitted_code as String
 		if valid_splitted_code and not is_comment and not is_str and not is_declaration:
 			var type_name: String = splitted_code.get_slice(")",0)
-			if not actor.get_component(type_name,false):
+			if not get_component_on_entity(actor, type_name):
 				dependencies_types.append(type_name)
 		var nl_index:int=splitted_code.find_last("\n")
 		var cm_index:int=splitted_code.find_last("#")
