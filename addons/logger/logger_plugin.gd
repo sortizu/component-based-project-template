@@ -1,15 +1,17 @@
 tool
 extends EditorPlugin
 
+var logger: Node
+
 func _enter_tree():
-	add_autoload_singleton("Logger","res://addons/logger/logger_plugin.gd")
-	connect("scene_changed",self,"on_scene_changed")
+	add_autoload_singleton("Logger","res://addons/logger/logger.gd")
 
-#func _ready():
-#	var logger: Node = get_node_or_null("/root/Logger")
-#	if logger:
-#		connect("scene_changed",logger,"on_scene_changed")
-#		print("hola")
+func _ready():
+	call_deferred("set_dependencies")
 
-func on_scene_changed(node: Node):
-	print(node)
+func set_dependencies():
+	var logger: Node = get_node_or_null("/root/Logger")
+	if not logger:
+		pass
+	if not is_connected("scene_changed",logger,"on_scene_changed"):
+		connect("scene_changed",logger,"on_scene_changed")
