@@ -2,4 +2,4 @@ tool
 extends Entity
 
 func _ready():
-	Logger.print_error(self,"Hola")
+	Logger.print_error("[name]: Hola",[self])
