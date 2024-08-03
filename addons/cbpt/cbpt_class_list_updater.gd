@@ -1,5 +1,9 @@
 extends HTTPRequest
 
+## This node retreives an updated list of all the node classes available in
+## Godot API. It scrappes the Official Godot Docs website to get the list,
+## and saves it in the same folder of this script, in a file called "node_class_list.gd"
+
 func _ready() -> void:
 	var URL = "https://docs.godotengine.org/en/3.5/classes/index.html"
 	connect("request_completed", self, "_http_request_completed")
