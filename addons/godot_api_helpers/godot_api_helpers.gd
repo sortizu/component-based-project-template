@@ -1,11 +1,11 @@
 tool
 extends Node
-# This autoload contains some functions needed for internal operations
-# of this addon. This is not made to be used for other purposes.
+# This autoload contains some functions needed for internal operations of CBPT.
+# It implements some features Godot API doesn't offer.
 #-----------------------------AUTOLOAD VARIABLES-------------------------
 # Instance of "node_class_list.gd" to get node_class_list dictionary, intended for exclusive use inside this autoload
-var _node_class_list_script = preload("res://addons/cbpt/node_class_list.gd").new()
-enum ClassParameterTypes{GDSCRIPTNATIVECLASS, GDSCRIPT, STRING, OTHER}
+var _node_class_list_script = preload("res://addons/godot_api_helpers/node_class_list.gd").new()
+enum ClassParameterTypes {GDSCRIPTNATIVECLASS, GDSCRIPT, STRING, OTHER}
 #-----------------------------AUTOLOAD FUNCTIONS-------------------------
 
 # TODO DOCUMENTATION
@@ -14,7 +14,7 @@ func get_name_of_native_class(native_class:GDScriptNativeClass)->String:
 	if native_class in _node_class_list_script.node_class_list.keys():
 		str_class_name = _node_class_list_script.node_class_list[native_class]
 	else:
-		assert(false,"CBPTUtilities: Asked native class doesn't inherit of Node class")
+		assert(false,"GodotAPIHelpers: Asked native class doesn't inherit of Node class")
 	return str_class_name
 
 # TODO DOCUMENTATION

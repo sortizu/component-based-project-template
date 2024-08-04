@@ -10,7 +10,7 @@ extends Node
 # [recent_loggers]
 # [request_loggers_clear]
 # [set_current_logger]
-# [not_log_previous_logger]
+# [LoggerValidationConditions]
 # [is_current_valid]
 # [is_current_in_recent_loggers]
 
@@ -23,12 +23,16 @@ var recent_loggers: Array = []
 var current_logger: Object setget set_current_logger
 # Cleans recent loggers on scene change
 var clear_loggers: bool = true # Editor only
-var not_log_previous_logger: bool = true
+
+# PRESETS
+
+enum LoggerValidationConditions {NOT_RECENT_LOGGER, RECENT_LOGGER_ONCE}
+var current_validation_condition: int = LoggerValidationConditions.NOT_RECENT_LOGGER
 
 # METHODS
 
-## Receives a string (msg) with "format codes" used for inserts specific
-## information about a received group of objects (objects).
+## Receives a string [msg] with "format codes" used for inserts specific
+## information about a received group of objects [objects].
 ## Format code syntax with multiple objects: [object_index:property_name]
 ## Format code syntax with a single object: [property_name]
 ## Message examples:
@@ -67,13 +71,14 @@ func get_formatted_message(msg: String, objects: Array) -> String:
 		var property_exist: bool = false
 		if not object:
 			continue
+#		print(raw_format_code)
 		for prop_dict in object.get_property_list():
 			if property_name == prop_dict["name"]:
 				property_exist = true
 		if not property_exist:
 			continue
-		property_value = object.get(property_name)
-		final_msg.replace("[%s]"%raw_format_code,property_value)
+		property_value = str(object.get(property_name))
+		final_msg = final_msg.replace("[%s]"%raw_format_code,property_value)
 	return final_msg
 
 ## TODO DOCUMENTATION
@@ -93,13 +98,19 @@ func print(msg: String, objects: Array = []):
 
 ## TODO DOCUMENTATION
 func is_current_valid() -> bool:
-	return is_current_in_recent_loggers() # Add more validation logic
+	match current_validation_condition:
+		LoggerValidationConditions.NOT_RECENT_LOGGER:
+			return not is_current_in_recent_loggers()
+		LoggerValidationConditions.RECENT_LOGGER_ONCE:
+			return is_current_in_recent_loggers()
+	# Add more validation logic
+	return true
 
 ## TODO DOCUMENTATION
 func is_current_in_recent_loggers() -> bool:
 	if current_logger:
 		return recent_loggers.has(current_logger.get_instance_id())
-	return true
+	return false
 
 ## TODO DOCUMENTATION
 func request_loggers_clear():

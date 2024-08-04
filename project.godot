@@ -43,12 +43,12 @@ config/icon="res://icon.png"
 
 [autoload]
 
-CBPTUtilities="*res://addons/cbpt/cbpt_utilities.gd"
 Logger="*res://addons/logger/logger.gd"
+GodotAPIHelpers="*res://addons/godot_api_helpers/godot_api_helpers.gd"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/cbpt/plugin.cfg", "res://addons/logger/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/godot_api_helpers/plugin.cfg", "res://addons/logger/plugin.cfg" )
 
 [gui]
 

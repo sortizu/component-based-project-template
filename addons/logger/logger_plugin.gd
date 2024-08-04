@@ -17,3 +17,6 @@ func set_dependencies():
 func on_scene_changed():
 	if logger:
 		logger.request_loggers_clear()
+
+func _exit_tree():
+	remove_autoload_singleton("Logger")
