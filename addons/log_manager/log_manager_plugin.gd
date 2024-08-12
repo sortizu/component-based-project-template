@@ -4,7 +4,7 @@ extends EditorPlugin
 var logger: Node
 
 func _enter_tree():
-	add_autoload_singleton("Logger","res://addons/logger/logger.gd")
+	add_autoload_singleton("LogManager","res://addons/logger/logger.gd")
 	if not is_connected("scene_changed",self,"on_scene_changed"):
 		connect("scene_changed",logger,"on_scene_changed")
 

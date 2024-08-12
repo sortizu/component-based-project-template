@@ -6,6 +6,4 @@ func _enter_tree():
 
 func _ready():
 	
-	Logger.print_error("[name]: Hola ([filename])",[self])
-	Logger.print_error("[name]: Hola ([filename])",[self])
-#	print(get_property_list())
+	print("Hola{}")

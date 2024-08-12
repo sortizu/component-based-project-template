@@ -31,6 +31,9 @@ var current_validation_condition: int = LoggerValidationConditions.NOT_RECENT_LO
 
 # METHODS
 
+func get_logger(name: String) -> Logger:
+	return ""
+
 ## Receives a string [msg] with "format codes" used for inserts specific
 ## information about a received group of objects [objects].
 ## Format code syntax with multiple objects: [object_index:property_name]
