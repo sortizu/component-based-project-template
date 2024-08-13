@@ -50,10 +50,11 @@ config/icon="res://icon.png"
 [autoload]
 
 GodotAPIHelpers="*res://addons/godot_api_helpers/godot_api_helpers.gd"
+LogManager="*res://addons/log_manager/log_manager.gd"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/godot_api_helpers/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/godot_api_helpers/plugin.cfg", "res://addons/log_manager/plugin.cfg" )
 
 [gui]
 

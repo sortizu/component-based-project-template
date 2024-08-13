@@ -5,5 +5,5 @@ func _enter_tree():
 	pass
 
 func _ready():
-	
-	print("Hola{}")
+	var logger: Logger = LogManager.get_logger("Entity")
+	logger.info("Hola")
