@@ -53,7 +53,7 @@ GodotAPIHelpers="*res://addons/godot_api_helpers/godot_api_helpers.gd"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/godot_api_helpers/plugin.cfg", "res://addons/logger/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/godot_api_helpers/plugin.cfg" )
 
 [gui]
 
