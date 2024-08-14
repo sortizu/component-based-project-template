@@ -6,4 +6,4 @@ func _enter_tree():
 
 func _ready():
 	var logger: Logger = LogManager.get_logger("Entity")
-	logger.info("Hola")
+	logger.error("Hola")

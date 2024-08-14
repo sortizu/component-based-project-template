@@ -16,7 +16,8 @@ enum ValidationConditions {NOT_RECENT_LOGGER, RECENT_LOGGER_ONCE}
 
 var _name: String
 var log_level: int = LogLevels.INFO
-var format: String
+var format: String = "{time} [{lvl}] {msg}"
+var time_format: String = "YYYY-MM-DD hh:mm:ss"
 var log_requester: Object
 var current_validation_condition: int = ValidationConditions.NOT_RECENT_LOGGER
 
@@ -33,15 +34,15 @@ func _init(_new_name: String):
 
 ## Request a log of [INFO] type to [dlog]. Mostly used for giving information about processes on execution.
 func info(msg: String):
-	dlog({"msg":msg,"lvl":LogLevels.INFO})
+	dlog({"msg":msg, "lvl":LogLevels.INFO, "format":format, "time_format": time_format})
 
 ## Request a log of [WARN] type to [dlog]. Mostly used to notify potential errors.
 func warn(msg: String):
-	dlog({"msg":msg,"lvl":LogLevels.WARN})
+	dlog({"msg":msg,"lvl":LogLevels.WARN, "format":format, "time_format": time_format})
 
 ## Request a log of [ERROR] type to [dlog]. Mostly used to notify undesired results when executing a process.
 func error(msg: String):
-	dlog({"msg":msg,"lvl":LogLevels.ERROR})
+	dlog({"msg":msg,"lvl":LogLevels.ERROR, "format":format, "time_format": time_format})
 
 ## Detailed log method, uses a dictionary to get the data to log.
 ## Data names: [msg] -> message, [lvl] -> log level, [objs] -> objects to be inserted on log [msg]
@@ -51,7 +52,7 @@ func dlog(log_dict: Dictionary):
 	var objs: Array = []
 	if log_dict.has("objs"):
 		objs = log_dict["objs"]
-	var fmsg: String = get_formatted_message(log_dict["msg"],objs)
+	var fmsg: String = LogFormatter.get_formatted_message(log_dict)
 	match log_dict["lvl"]:
 		LogLevels.WARN:
 			push_warning(fmsg)
@@ -66,6 +67,8 @@ func dlog(log_dict: Dictionary):
 ## - Any other validation logic (Overwritting this method on inherited classes).
 func is_valid(log_dict: Dictionary) -> bool:
 	# Log dict has all the needed information for logs
+	if not log_dict.has("format"):
+		return false
 	if not log_dict.has("msg"):
 		return false
 	if log_dict.has("lvl"):
@@ -75,53 +78,3 @@ func is_valid(log_dict: Dictionary) -> bool:
 	if log_level > log_dict["lvl"]:
 		return false
 	return true
-
-## Receives a string [msg] with "format codes" used for inserts specific
-## information about a received group of objects [objects].
-## Format code syntax with multiple objects: [object_index:property_name]
-## Format code syntax with a single object: [property_name]
-## Message examples:
-## "[1:class]: This class has raised an error ([2:path])"
-func get_formatted_message(msg: String, objects: Array) -> String:
-	var final_msg: String = msg
-	var container_start_splits: PoolStringArray = msg.split("[")
-	for phrase in container_start_splits:
-		if objects.empty():
-			break
-		phrase = phrase as String
-		var raw_format_code: String = phrase.get_slice("]",0)
-		var obj_index: int = -1
-		var property_name: String
-		# Checks which syntax is used in the format code and gets
-		# object_index and property_name if possible.
-		if raw_format_code.matchn("*:*"):
-			# Gets assumed index
-			var aindex: String = raw_format_code.get_slice(":",0) # assumed index
-			if not aindex.is_valid_integer(): # Wrong syntax used
-				continue
-			obj_index = int(aindex)
-			# Gets property name
-			property_name = raw_format_code.get_slice(":",1)
-		else:
-			property_name = raw_format_code
-		# Gets the property owner (objects array)
-		var property_value: String
-		var object: Object
-		if obj_index >= 0:
-			object = objects[obj_index]
-		else:
-			object = objects[0]
-		# Checks if the property name exists in the object(s)
-		# If it exist, gets the property value
-		var property_exist: bool = false
-		if not object:
-			continue
-#		print(raw_format_code)
-		for prop_dict in object.get_property_list():
-			if property_name == prop_dict["name"]:
-				property_exist = true
-		if not property_exist:
-			continue
-		property_value = str(object.get(property_name))
-		final_msg = final_msg.replace("[%s]"%raw_format_code,property_value)
-	return final_msg

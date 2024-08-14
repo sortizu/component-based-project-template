@@ -20,6 +20,11 @@ _global_script_classes=[ {
 "path": "res://entities/entity.gd"
 }, {
 "base": "Reference",
+"class": "LogFormatter",
+"language": "GDScript",
+"path": "res://addons/log_manager/log_formatter.gd"
+}, {
+"base": "Reference",
 "class": "Logger",
 "language": "GDScript",
 "path": "res://addons/log_manager/logger.gd"
@@ -37,6 +42,7 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "Component": "",
 "Entity": "",
+"LogFormatter": "",
 "Logger": "",
 "State": "",
 "StateManager": ""
