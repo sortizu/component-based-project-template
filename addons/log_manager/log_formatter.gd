@@ -82,14 +82,13 @@ static func get_formatted_objs_on_msg(msg: String, objects: Array) -> String:
 		var property_exist: bool = false
 		if not object:
 			continue
-#		print(raw_format_code)
 		for prop_dict in object.get_property_list():
 			if property_name == prop_dict["name"]:
 				property_exist = true
 		if not property_exist:
 			continue
 		property_value = str(object.get(property_name))
-		final_msg = final_msg.replace("[%s]"%raw_format_code,property_value)
+		final_msg = final_msg.replace("{"+raw_format_code+"}",property_value)
 	return final_msg
 
 ## TODO DOCUMENTATION

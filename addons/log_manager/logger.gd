@@ -33,16 +33,16 @@ func _init(_new_name: String):
 	log_level = LogLevels.INFO
 
 ## Request a log of [INFO] type to [dlog]. Mostly used for giving information about processes on execution.
-func info(msg: String):
-	dlog({"msg":msg, "lvl":LogLevels.INFO, "format":format, "time_format": time_format})
+func info(_msg: String, _objs: Array):
+	dlog({"msg":_msg, "objs":_objs, "lvl":LogLevels.INFO, "format":format, "time_format": time_format})
 
 ## Request a log of [WARN] type to [dlog]. Mostly used to notify potential errors.
-func warn(msg: String):
-	dlog({"msg":msg,"lvl":LogLevels.WARN, "format":format, "time_format": time_format})
+func warn(_msg: String, _objs: Array):
+	dlog({"msg":_msg, "objs":_objs, "lvl":LogLevels.WARN, "format":format, "time_format": time_format})
 
 ## Request a log of [ERROR] type to [dlog]. Mostly used to notify undesired results when executing a process.
-func error(msg: String):
-	dlog({"msg":msg,"lvl":LogLevels.ERROR, "format":format, "time_format": time_format})
+func error(_msg: String, _objs: Array):
+	dlog({"msg":_msg, "objs":_objs, "lvl":LogLevels.ERROR, "format":format, "time_format": time_format})
 
 ## Detailed log method, uses a dictionary to get the data to log.
 ## Data names: [msg] -> message, [lvl] -> log level, [objs] -> objects to be inserted on log [msg]
@@ -50,8 +50,6 @@ func dlog(log_dict: Dictionary):
 	if is_valid(log_dict):
 		pass
 	var objs: Array = []
-	if log_dict.has("objs"):
-		objs = log_dict["objs"]
 	var fmsg: String = LogFormatter.get_formatted_message(log_dict)
 	match log_dict["lvl"]:
 		LogLevels.WARN:
