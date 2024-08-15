@@ -20,11 +20,6 @@ _global_script_classes=[ {
 "path": "res://entities/entity.gd"
 }, {
 "base": "Reference",
-"class": "LogFormatter",
-"language": "GDScript",
-"path": "res://addons/log_manager/log_formatter.gd"
-}, {
-"base": "Reference",
 "class": "Logger",
 "language": "GDScript",
 "path": "res://addons/log_manager/logger.gd"
@@ -42,7 +37,6 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "Component": "",
 "Entity": "",
-"LogFormatter": "",
 "Logger": "",
 "State": "",
 "StateManager": ""
@@ -71,6 +65,11 @@ enabled=PoolStringArray( "res://addons/godot_api_helpers/plugin.cfg", "res://add
 
 common/drop_mouse_on_gui_input_disabled=true
 common/text_edit_undo_stack_max_size=10240
+
+[network]
+
+limits/debugger_stdout/max_chars_per_second=16384
+limits/debugger_stdout/max_messages_per_frame=50
 
 [physics]
 
