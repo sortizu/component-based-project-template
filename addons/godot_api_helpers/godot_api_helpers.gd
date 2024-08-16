@@ -66,8 +66,6 @@ func get_component_on_entity(entity: Entity, component_class, print_error: bool 
 		else:
 			component_class_name = component_class
 		var error_msg = "%s: Couldn't find component of type %s"%[entity.name, component_class_name]
-		if print_error:
-			printerr(error_msg)
 		assert(not throw_error,error_msg)
 	return component
 

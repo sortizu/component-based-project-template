@@ -20,7 +20,8 @@ var format: String = "{time} [{lvl}] {msg}"
 var time_format: String = "YYYY-MM-DD hh:mm:ss"
 var log_requester: Object
 var current_validation_condition: int = ValidationConditions.NOT_RECENT_LOGGER
-
+var _log_history: Array = []
+var _max_log_history: int = 5
 # For custom log validation and managing check: 
 # [log_requester]
 # [is_log_data_valid]
@@ -51,6 +52,10 @@ func dlog(_msg: String, _lvl: int, _format: String, _time_format: String):
 		pass
 	var objs: Array = []
 	var fmsg: String = get_formatted_message(_msg, _lvl, _format, _time_format)
+	# Append log to log history
+	if _log_history.size() >= _max_log_history:
+		_log_history.pop_back()
+	_log_history.append(fmsg)
 	match _lvl:
 		LogLevels.WARN:
 			push_warning(fmsg)
