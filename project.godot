@@ -33,18 +33,25 @@ _global_script_classes=[ {
 "class": "StateManager",
 "language": "GDScript",
 "path": "res://components/state_manager/state_manager.gd"
+}, {
+"base": "Component",
+"class": "TestComponent",
+"language": "GDScript",
+"path": "res://test/test_component.gd"
 } ]
 _global_script_class_icons={
 "Component": "",
 "Entity": "",
 "Logger": "",
 "State": "",
-"StateManager": ""
+"StateManager": "",
+"TestComponent": ""
 }
 
 [application]
 
 config/name="component-based-project-template"
+run/main_scene="res://test/test_entity.tscn"
 config/icon="res://icon.png"
 
 [autoload]

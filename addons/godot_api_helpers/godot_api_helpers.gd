@@ -43,11 +43,13 @@ func get_class_parameter_type(node_class)->int:
 	return ClassParameterTypes.OTHER
 
 func get_component_on_entity(entity: Entity, component_class, print_error: bool = true, throw_error: bool = false) -> Node:
+	var logger: Logger = LogManager.get_logger("Entity")
 	var component: Node = null
 	# "SAFETY WALL" to filter the correct values for type parameter
 	var class_type: int = get_class_parameter_type(component_class)
 	if class_type == ClassParameterTypes.OTHER:
-		assert(false,"%s: Given parameter 'component_class' is not of a valid type (GDScriptNativeClass, GDScript, String)"% entity.name)
+		if not Engine.editor_hint:
+			logger.error("[%s] Given parameter 'component_class' is not of a valid type (GDScriptNativeClass, GDScript, String)"% entity.name,"[{lvl}]{msg}")
 	# Searching the component
 	if class_type == ClassParameterTypes.STRING:
 		for child in entity.get_children():
@@ -65,8 +67,8 @@ func get_component_on_entity(entity: Entity, component_class, print_error: bool 
 			component_class_name = get_name_of_native_class(component_class)
 		else:
 			component_class_name = component_class
-		var error_msg = "%s: Couldn't find component of type %s"%[entity.name, component_class_name]
-		assert(not throw_error,error_msg)
+		if not Engine.editor_hint:
+			logger.error("[%s] Couldn't find component of type %s"%[entity.name, component_class_name],"[{lvl}]{msg}")
 	return component
 
 ## Searches within a source code for all components requested within

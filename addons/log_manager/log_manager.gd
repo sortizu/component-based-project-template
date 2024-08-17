@@ -12,6 +12,10 @@ extends Node
 var _loggers: Dictionary = {}
 # Stores the last logger returned on [get_logger]
 var _last_requested_logger: Logger
+# TODO DOCUMENTATION
+var default_format: String = "{time} [{lvl}] {msg}"
+# TODO DOCUMENTATION
+var default_time_format: String = "YYYY-MM-DD hh:mm:ss"
 
 # METHODS
 

@@ -1,3 +1,4 @@
+tool
 class_name Logger
 
 # This class provides functionalities to make logs and to control its frequency, order and format.
@@ -10,21 +11,23 @@ class_name Logger
 # ENUM DEFINITION
 
 enum LogLevels {INFO=0, WARN=1, ERROR=2}
-enum ValidationConditions {NOT_RECENT_LOGGER, RECENT_LOGGER_ONCE}
 
 # VARIABLES (PRESETS)
 
 var _name: String
 var log_level: int = LogLevels.INFO
+# TODO DOCUMENTATION
 var format: String = "{time} [{lvl}] {msg}"
+# TODO DOCUMENTATION
 var time_format: String = "YYYY-MM-DD hh:mm:ss"
-var log_requester: Object
-var current_validation_condition: int = ValidationConditions.NOT_RECENT_LOGGER
+var log_requester_id: int
 var _log_history: Array = []
-var _max_log_history: int = 5
+var _max_log_history: int = 1
+
 # For custom log validation and managing check: 
 # [log_requester]
 # [is_log_data_valid]
+# [is_formatted_message_valid]
 
 # METHODS
 
@@ -33,36 +36,52 @@ func _init(_new_name: String):
 	_name = _new_name
 	log_level = LogLevels.INFO
 
-## Request a log of [INFO] type to [dlog]. Mostly used for giving information about processes on execution.
-func info(_msg: String):
-	dlog(_msg, LogLevels.INFO, format, time_format)
+## Requests a log of [INFO] type to [dlog]. Mostly used for giving information about processes on execution.
+func info(_msg: String, _format: String = format, _time_format: String = time_format):
+	dlog(_msg, LogLevels.INFO, _format, _time_format)
 
-## Request a log of [WARN] type to [dlog]. Mostly used to notify potential errors.
-func warn(_msg: String):
-	dlog(_msg, LogLevels.WARN, format, time_format)
+## Requests a log of [WARN] type to [dlog]. Mostly used to notify potential errors.
+func warn(_msg: String, _format: String = format, _time_format: String = time_format):
+	dlog(_msg, LogLevels.WARN, _format, _time_format)
 
-## Request a log of [ERROR] type to [dlog]. Mostly used to notify undesired results when executing a process.
-func error(_msg: String):
-	dlog(_msg, LogLevels.ERROR, format, time_format)
+## Requests a log of [ERROR] type to [dlog]. Mostly used to notify undesired results when executing a process.
+func error(_msg: String, _format: String = format, _time_format: String = time_format):
+	dlog(_msg, LogLevels.ERROR, _format, _time_format)
 
-## Detailed log method, uses a dictionary to get the data to log.
-## Data names: [msg] -> message, [lvl] -> log level, [objs] -> objects to be inserted on log [msg]
+## Executes an assert if godot editor is open, otherwise requests a log of [ERROR] type 
+func errorb(_msg: String, _format: String = format, _time_format: String = time_format):
+	if not is_log_data_valid(_msg, LogLevels.ERROR, _format, _time_format):
+		return
+	var _fmsg: String = get_formatted_message(_msg, LogLevels.ERROR, _format, _time_format)
+	if not is_formatted_message_valid(_fmsg):
+		return
+	add_to_log_history(_fmsg)
+	if not Engine.editor_hint:
+		push_error(_fmsg)
+		return
+	#
+	# Please, go down in the stacktrace to reach the faulty code
+	#
+	assert(false, _fmsg)
+
+## Detailed log method, requires the following parameters to achieve a log:
+## [msg] -> message, [lvl] -> log level
 func dlog(_msg: String, _lvl: int, _format: String, _time_format: String):
-	if is_log_data_valid(_msg, _lvl, _format, _time_format):
-		pass
+	if not is_log_data_valid(_msg, _lvl, _format, _time_format):
+		return
 	var objs: Array = []
 	var fmsg: String = get_formatted_message(_msg, _lvl, _format, _time_format)
+	if not is_formatted_message_valid(fmsg):
+		return
 	# Append log to log history
-	if _log_history.size() >= _max_log_history:
-		_log_history.pop_back()
-	_log_history.append(fmsg)
+	add_to_log_history(_msg)
 	match _lvl:
+		LogLevels.INFO:
+			print(fmsg)
 		LogLevels.WARN:
 			push_warning(fmsg)
 		LogLevels.ERROR:
 			push_error(fmsg)
-		LogLevels.INFO:
-			print(fmsg)
 
 ## Evaluates if the data passed to [dlog] is valid by checking:
 ## - Whether the log level satisfies the preset [log_level].
@@ -72,6 +91,14 @@ func is_log_data_valid(_msg: String, _lvl: int, _format: String, _time_format: S
 	if log_level > _lvl:
 		return false
 	return true # Add custom validation logic
+
+## Evaluates if the formatted message is valid by checking:
+## - It is already in the log history (which only saves recent logs according to [_max_log_history]).
+## - Any other validation logic (Overwritting this method on inherited classes).
+func is_formatted_message_valid(_fmsg: String):
+#	if _log_history.has(_fmsg):
+#		return false
+	return true  # Add custom validation logic
 
 ## TODO DOCUMENTATION
 static func get_formatted_message(_msg: String, _lvl: int, _format: String, _time_format: String) -> String:
@@ -105,3 +132,9 @@ static func get_formatted_time_on_msg(msg: String, time_format: String) -> Strin
 	msg = msg.replace("mm",current_datetime["minute"])
 	msg = msg.replace("ss",current_datetime["second"])
 	return msg
+
+## TODO DOCUMENTATION
+func add_to_log_history(msg: String):
+	if _log_history.size() >= _max_log_history:
+		_log_history.pop_back()
+	_log_history.append(msg)
