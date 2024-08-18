@@ -53,7 +53,9 @@ func change_state(_state_name: String) -> void:
 			continue
 		if child.name == _state_name:
 			set_current_state(child)
-			break
+			return
+	var logger: Logger = LogManager.get_logger("Entity")
+	logger.error("[%s] Can't find state of name %s"%[get_parent().name, _state_name], "[{lvl}] {msg}")
 
 ## Calls the [_state_process] method in [current_state]
 func _custom_process(_delta):

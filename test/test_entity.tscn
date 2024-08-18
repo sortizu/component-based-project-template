@@ -10,6 +10,7 @@ script = ExtResource( 1 )
 
 [node name="StateManager" type="Node2D" parent="."]
 script = ExtResource( 2 )
+unhandled_input_event = true
 _starting_state_path = NodePath("TestState1")
 
 [node name="TestState1" type="Node2D" parent="StateManager"]
