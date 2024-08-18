@@ -2,20 +2,26 @@ tool
 class_name State extends Node2D
 var actor: Entity
 # warning-ignore:unused_signal
-signal change_state(new_state)
-# TODO DOCUMENTATION
-func enter_state():
+signal change_state(state_name)
+
+## This method is called when the state is set as [current_state] in the StateManager
+func _enter_state():
 	pass
-# TODO DOCUMENTATION
-func exit_state():
+
+## This method is called when the state is replaced as [current_state] in the StateManager
+func _exit_state():
 	pass
-# TODO DOCUMENTATION
-func state_unhandled_input(_event:InputEvent):
+
+## This method is called (by the [StateManager]) every time an InputEvent
+## is triggered
+func _state_unhandled_input(_event:InputEvent):
 	pass
-# TODO DOCUMENTATION
-func state_process(_delta):
+
+## This method is called (by the [StateManager]) every frame
+func _state_process(_delta):
 	pass
-## Getting the missing components on actor entity to show in editor as warning
+
+## Getting the missing components on actor [Entity] to show in editor as warning
 func _get_configuration_warning() -> String:	
 	var dependencies_types = GodotAPIHelpers.get_missing_components_on_entity(get_script().source_code,actor,"actor")
 	var msg: String
