@@ -11,18 +11,25 @@ class_name Logger
 # ENUM DEFINITION
 
 enum LogLevels {INFO=0, WARN=1, ERROR=2}
+# List all possible outputs for logs
+enum LogOutput {DEBUGGER, OUTPUT, ALL}
 
 # VARIABLES (PRESETS)
 
 var _name: String
 var log_level: int = LogLevels.INFO
-# TODO DOCUMENTATION
+## TODO DOCUMENTATION
 var format: String = "{time} [{lvl}] {msg}"
-# TODO DOCUMENTATION
+## TODO DOCUMENTATION
 var time_format: String = "YYYY-MM-DD hh:mm:ss"
 var log_requester_id: int
 var _log_history: Array = []
 var _max_log_history: int = 1
+
+## ADITIONAL SETTINGS
+
+# Selected output for [warn] and [error] logs
+var high_level_output: int = LogOutput.DEBUGGER
 
 # For custom log validation and managing check: 
 # [log_requester]
@@ -64,8 +71,7 @@ func errorb(_msg: String, _format: String = format, _time_format: String = time_
 	#
 	assert(false, _fmsg)
 
-## Detailed log method, requires the following parameters to achieve a log:
-## [msg] -> message, [lvl] -> log level
+## Detailed log method, used for customizable logs
 func dlog(_msg: String, _lvl: int, _format: String, _time_format: String):
 	if not is_log_data_valid(_msg, _lvl, _format, _time_format):
 		return
@@ -73,15 +79,29 @@ func dlog(_msg: String, _lvl: int, _format: String, _time_format: String):
 	var fmsg: String = get_formatted_message(_msg, _lvl, _format, _time_format)
 	if not is_formatted_message_valid(fmsg):
 		return
-	# Append log to log history
+	# Append log to [log_history]
 	add_to_log_history(_msg)
 	match _lvl:
 		LogLevels.INFO:
 			print(fmsg)
 		LogLevels.WARN:
-			push_warning(fmsg)
+			match high_level_output:
+				LogOutput.OUTPUT:
+					print(fmsg)
+				LogOutput.DEBUGGER:
+					push_warning(fmsg)
+				LogOutput.ALL:
+					push_warning(fmsg)
+					print(fmsg)
 		LogLevels.ERROR:
-			push_error(fmsg)
+			match high_level_output:
+				LogOutput.OUTPUT:
+					print(fmsg)
+				LogOutput.DEBUGGER:
+					push_error(fmsg)
+				LogOutput.ALL:
+					push_error(fmsg)
+					print(fmsg)
 
 ## Evaluates if the data passed to [dlog] is valid by checking:
 ## - Whether the log level satisfies the preset [log_level].
@@ -100,7 +120,12 @@ func is_formatted_message_valid(_fmsg: String):
 #		return false
 	return true  # Add custom validation logic
 
-## TODO DOCUMENTATION
+## Returns a new String based on _msg, but replacing all format codes with
+## the respective information.
+## format codes: 
+## - {msg} -> message
+## - {lvl} -> log level
+## - {time} -> log time data based on [_time_format]
 static func get_formatted_message(_msg: String, _lvl: int, _format: String, _time_format: String) -> String:
 	var final_msg: String = _format
 	# Creating new message based on [format]
@@ -113,7 +138,7 @@ static func get_formatted_message(_msg: String, _lvl: int, _format: String, _tim
 	final_msg = final_msg.replace("{lvl}",LogLevels.keys()[_lvl])
 	return final_msg
 
-## Available timestamps:
+## Available timestamps formats:
 ## - YYYY
 ## - MM
 ## - DD
@@ -133,7 +158,8 @@ static func get_formatted_time_on_msg(msg: String, time_format: String) -> Strin
 	msg = msg.replace("ss",current_datetime["second"])
 	return msg
 
-## TODO DOCUMENTATION
+## Adds a new log to [log_history] array and controls it's
+## maximum size using [_max_log_history]
 func add_to_log_history(msg: String):
 	if _log_history.size() >= _max_log_history:
 		_log_history.pop_back()
