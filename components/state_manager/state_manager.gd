@@ -55,7 +55,7 @@ func change_state(_state_name: String) -> void:
 			set_current_state(child)
 			return
 	var logger: Logger = LogManager.get_logger("Entity")
-	logger.error("[%s] Can't find state of name %s"%[get_parent().name, _state_name], "[{lvl}] {msg}")
+	logger.error("[%s/%s] Can't find state of name %s"%[get_parent().name, name, _state_name], "[{lvl}] {msg}")
 
 ## Calls the [_state_process] method in [current_state]
 func _custom_process(_delta):
@@ -71,7 +71,8 @@ func _custom_unhandled_input(event):
 ## to any new child of type [State]
 func _on_child_entered(_node: Node):
 	if _node is State:
-		_node.actor = get_parent()
+		if _node.get_script().is_tool():
+			(_node as State).actor = get_parent()
 		if not _node.is_connected("change_state",self,"change_state"):
 			# warning-ignore:return_value_discarded
 			_node.connect("change_state",self,"change_state")
@@ -79,7 +80,11 @@ func _on_child_entered(_node: Node):
 ## Shows a warning message in editor when a child isn't of type [State]
 func _get_configuration_warning() -> String:
 	for child in get_children():
-		if not child is State:
+		if child is State:
+			if not child.get_script().is_tool():
+				continue
+			child.actor = get_parent() as Entity
+		else:
 			return "Children of this component should be of type State"
 	return ._get_configuration_warning()
 
