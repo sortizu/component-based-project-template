@@ -71,7 +71,7 @@ func _custom_unhandled_input(event):
 ## to any new child of type [State]
 func _on_child_entered(_node: Node):
 	if _node is State:
-		if _node.get_script().is_tool():
+		if _node.get_script().is_tool() and _node.get_script().can_instance():
 			(_node as State).actor = get_parent()
 		if not _node.is_connected("change_state",self,"change_state"):
 			# warning-ignore:return_value_discarded
@@ -81,7 +81,7 @@ func _on_child_entered(_node: Node):
 func _get_configuration_warning() -> String:
 	for child in get_children():
 		if child is State:
-			if not child.get_script().is_tool():
+			if not child.get_script().is_tool() or not child.get_script().can_instance():
 				continue
 			child.actor = get_parent() as Entity
 		else:
